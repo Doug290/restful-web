@@ -33,8 +33,8 @@ public class UserEntity implements Serializable {
 
 	private String emailVerificationToken;
 
-	@Column(nullable = false, columnDefinition = "boolean default false")
-	private Boolean emailVerificationStatus;
+	@Column(nullable = false)
+	private boolean emailVerificationStatus = false;
 
 	public long getId() {
 		return id;
@@ -92,7 +92,7 @@ public class UserEntity implements Serializable {
 		this.emailVerificationToken = emailVerificationToken;
 	}
 
-	public Boolean getEmailVerificationStatus() {
+	public boolean getEmailVerificationStatus() {
 		return emailVerificationStatus;
 	}
 

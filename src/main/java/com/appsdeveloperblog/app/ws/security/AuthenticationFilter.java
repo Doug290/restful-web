@@ -9,11 +9,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.appsdeveloperblog.app.ws.SpringApplicationContext;
+import com.appsdeveloperblog.app.ws.service.UserService;
+import com.appsdeveloperblog.app.ws.shared.dto.UserDto;
 import com.appsdeveloperblog.ws.ui.model.request.UserLoginRequestModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,7 +27,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 	private final AuthenticationManager authenticationManager;
-	
+
+	// CANNOT DO THIS
+//	@Autowired
+//	UserService userServicee;
+
+
 	public AuthenticationFilter(AuthenticationManager authenticationManager) {
 		this.authenticationManager = authenticationManager;
 	}
@@ -58,8 +67,14 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 				.setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
 				.signWith(SignatureAlgorithm.HS512, SecurityConstants.TOKEN_SECRET)
 				.compact();
-		
+
+		// doing this to instantiate the webSecuritry
+		// we cannot autowire it
+		UserService userService = (UserService)SpringApplicationContext.getBean("userServiceImpl");
+		UserDto userDto = userService.getUser(userName);
+
 		res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
+		res.addHeader("UserID", userDto.getUserId());
 	}
 
 }
